@@ -83,7 +83,7 @@ def transcribe_audio_file(client: Any, audio_path: Path, model: str) -> str:
         response = client.audio.transcriptions.create(
             model=model,
             file=audio_file,
-            response_format="verbose_json",
+            response_format="json",
         )
     return extract_transcript_text(_to_dict(response))
 

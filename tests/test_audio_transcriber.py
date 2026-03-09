@@ -5,6 +5,7 @@ from pathlib import Path
 from audio_transcriber import (
     build_output_path,
     extract_transcript_text,
+    transcribe_audio_file,
     write_transcript,
 )
 
@@ -55,6 +56,32 @@ class TestWriteTranscript(unittest.TestCase):
             output_path = Path(temp_dir) / "out.txt"
             write_transcript(output_path, "Linea 1\nLinea 2")
             self.assertEqual(output_path.read_text(encoding="utf-8"), "Linea 1\nLinea 2")
+
+
+class TestTranscribeAudioFile(unittest.TestCase):
+    def test_uses_json_response_format(self) -> None:
+        calls: list[dict] = []
+
+        class FakeTranscriptions:
+            @staticmethod
+            def create(**kwargs):
+                calls.append(kwargs)
+                return {"text": "ok"}
+
+        class FakeAudio:
+            transcriptions = FakeTranscriptions()
+
+        class FakeClient:
+            audio = FakeAudio()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            audio_path = Path(temp_dir) / "sample.m4a"
+            audio_path.write_bytes(b"fake")
+            result = transcribe_audio_file(FakeClient(), audio_path, "gpt-4o-transcribe")
+
+        self.assertEqual(result, "ok")
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0]["response_format"], "json")
 
 
 if __name__ == "__main__":
