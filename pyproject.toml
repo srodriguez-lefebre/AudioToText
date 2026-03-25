@@ -1,0 +1,46 @@
+[project]
+name = "audio-to-text"
+version = "0.1.0"
+description = "CLI para transcribir audio con OpenAI"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.3",
+    "openai>=1.40.0",
+    "pydantic-settings>=2.11.0",
+    "typer>=0.16.0",
+]
+
+[project.scripts]
+text = "audio_to_text.cli:app"
+audio-to-text = "audio_to_text.cli:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "pytest>=8.4.2",
+    "ruff>=0.13.1",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "RET", "SIM", "DTZ"]
+ignore = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+strict = true
+warn_unreachable = true
+warn_unused_configs = true
+show_error_codes = true
