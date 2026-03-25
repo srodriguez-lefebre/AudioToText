@@ -1,47 +1,111 @@
-# audioToText CLI
+# audioToText
 
-CLI simple para transcribir un archivo de audio con OpenAI, reestructurar el texto y guardarlo en un `.txt`.
+CLI chica para transcribir audio con OpenAI, limpiar el texto y guardar un `.txt` con un comando corto.
 
 ## Requisitos
 
-- Python 3.10+
+- `uv`
+- Python 3.12
 - API key de OpenAI
 
-## Instalacion
+## Instalación
 
 ```bash
-python3 -m pip install -r requirements.txt
+uv sync
 ```
 
-## Uso rapido
-
-1. Coloca tu archivo de audio en `audio_inputs/` (o usa cualquier ruta).
-2. Exporta tu API key:
+Si querés usar el comando sin prefijar `uv run`, podés activar el entorno virtual:
 
 ```bash
-export OPENAI_API_KEY="tu_api_key"
+source .venv/bin/activate
 ```
 
-3. Ejecuta:
+## Configuración
+
+Copiá `.env.example` a `.env` y completá al menos la API key:
 
 ```bash
-python3 audio_transcriber.py --input audio_inputs/mi-audio.mp3
+cp .env.example .env
 ```
 
-Resultado por defecto: `transcriptions/mi-audio.txt`.
+Variables disponibles:
 
-## Opciones utiles
+- `OPENAI_API_KEY`
+- `INPUT_DIR`
+- `OUTPUT_DIR`
+- `TRANSCRIPTION_MODEL`
+- `CLEANUP_MODEL`
+- `LOG_LEVEL`
+
+Defaults:
+
+- `INPUT_DIR=audio_inputs`
+- `OUTPUT_DIR=transcriptions`
+- `TRANSCRIPTION_MODEL=gpt-4o-transcribe`
+- `CLEANUP_MODEL=gpt-4.1-mini`
+
+El CLI intenta cargar un `.env` del directorio actual si existe. Si corrés `text` desde la raíz del repo, usa ese `.env`. Si no existe, toma variables de entorno normales del sistema.
+
+## Uso rápido
+
+Poné un audio en `audio_inputs/` del directorio desde el que vas a correr el comando, y corré:
 
 ```bash
-python3 audio_transcriber.py \
-  --input audio_inputs/mi-audio.mp3 \
-  --output transcriptions/salida-final.txt \
+uv run text nota
+```
+
+Si existe un único archivo que empiece por ese stem, por ejemplo `audio_inputs/nota.mp3`, el CLI lo resuelve solo y guarda:
+
+```bash
+transcriptions/nota.txt
+```
+
+También podés usar el nombre completo:
+
+```bash
+uv run text nota-reunion.m4a
+```
+
+O una ruta explícita:
+
+```bash
+uv run text /ruta/completa/audio.wav
+```
+
+## Opciones útiles
+
+Guardar salida en otra carpeta:
+
+```bash
+uv run text nota --output-dir otro_directorio
+```
+
+Guardar en un archivo puntual:
+
+```bash
+uv run text nota --output transcriptions/salida-final.txt
+```
+
+Guardar la transcripción cruda sin cleanup:
+
+```bash
+uv run text nota --skip-cleanup
+```
+
+Cambiar modelos en una ejecución:
+
+```bash
+uv run text nota \
   --transcription-model gpt-4o-transcribe \
   --cleanup-model gpt-4.1-mini
 ```
 
-Para guardar texto crudo sin reestructurar:
+Ver más logs:
 
 ```bash
-python3 audio_transcriber.py --input audio_inputs/mi-audio.mp3 --skip-cleanup
+uv run text nota --verbose
 ```
+
+## Compatibilidad
+
+El archivo `audio_transcriber.py` quedó como wrapper para el CLI nuevo, pero el flujo recomendado es usar `text`.

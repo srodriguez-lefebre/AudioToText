@@ -1,6 +1,11 @@
 __pycache__/
 tests/__pycache__/
 *.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
 .env
 transcriptions/
 audio_inputs/
