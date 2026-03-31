@@ -10,12 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         dark: {
-          bg: "#0a0a0a",
-          surface: "#141414",
-          border: "#262626",
+          bg: "#0f0f0f",
+          surface: "#1a1a1a",
+          border: "#2a2a2a",
           text: "#e5e5e5",
           muted: "#a3a3a3",
-          accent: "#3b82f6",
+          accent: "#6366f1",
         },
       },
     },
