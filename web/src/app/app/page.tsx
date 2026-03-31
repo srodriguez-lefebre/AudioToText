@@ -23,6 +23,8 @@ export default function AppPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
+  const statusTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   function handleDragOver(e: DragEvent) {
     e.preventDefault();
@@ -51,6 +53,13 @@ export default function AppPage() {
     setLoading(true);
     setError("");
     setTranscription("");
+    setStatusMsg("Enviando archivo...");
+    statusTimers.current.forEach(clearTimeout);
+    statusTimers.current = [
+      setTimeout(() => setStatusMsg("Transcribiendo con OpenAI..."), 4000),
+      setTimeout(() => setStatusMsg(cleanupEnabled ? "Esperando respuesta..." : "Casi listo..."), 18000),
+      setTimeout(() => setStatusMsg(cleanupEnabled ? "Limpiando texto..." : "Finalizando..."), 35000),
+    ];
 
     try {
       const formData = new FormData();
@@ -80,6 +89,9 @@ export default function AppPage() {
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
+      statusTimers.current.forEach(clearTimeout);
+      statusTimers.current = [];
+      setStatusMsg("");
       setLoading(false);
     }
   }
@@ -304,6 +316,13 @@ export default function AppPage() {
             )}
           </button>
 
+          {statusMsg && (
+            <div className="flex items-center gap-2 text-sm text-dark-muted">
+              <div className="w-3.5 h-3.5 border-2 border-dark-accent border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              <span>{statusMsg}</span>
+            </div>
+          )}
+
           {error && (
             <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
               {error}
@@ -324,9 +343,29 @@ export default function AppPage() {
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="text-xs text-dark-accent hover:text-dark-accent/80 transition-colors"
+                  title={copied ? "Copiado" : "Copiar al portapapeles"}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                    copied
+                      ? "bg-green-500/10 border-green-500/30 text-green-400"
+                      : "bg-dark-surface border-dark-border text-dark-accent hover:bg-dark-border hover:text-white"
+                  }`}
                 >
-                  {copied ? "Copiado!" : "Copiar"}
+                  {copied ? (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Copiado
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                      </svg>
+                      Copiar
+                    </>
+                  )}
                 </button>
               </div>
             )}
