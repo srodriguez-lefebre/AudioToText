@@ -288,32 +288,7 @@ export default function AppPage() {
             disabled={!file || loading}
             className="w-full py-3 bg-dark-accent hover:bg-dark-accent/90 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-dark-accent/50 focus:ring-offset-2 focus:ring-offset-dark-bg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg
-                  className="w-4 h-4 animate-spin"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                Transcribiendo...
-              </span>
-            ) : (
-              "Transcribir"
-            )}
+            Transcribir
           </button>
 
           {statusMsg && (
@@ -331,7 +306,7 @@ export default function AppPage() {
         </section>
 
         {/* Right panel - Result */}
-        <section className="flex-1 p-6 flex flex-col min-h-0">
+        <section className="flex-1 p-6 flex flex-col min-h-[420px] lg:min-h-0">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-medium text-dark-muted uppercase tracking-wider">
               Transcripcion
@@ -373,11 +348,13 @@ export default function AppPage() {
 
           <div className="flex-1 bg-dark-surface border border-dark-border rounded-xl p-6 overflow-y-auto">
             {loading ? (
-              <div className="flex flex-col items-center justify-center h-full gap-3">
-                <div className="w-8 h-8 border-2 border-dark-accent border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-dark-muted">
-                  Transcribiendo audio...
-                </p>
+              <div className="space-y-3 animate-pulse">
+                <div className="h-4 bg-dark-border rounded w-3/4" />
+                <div className="h-4 bg-dark-border rounded w-full" />
+                <div className="h-4 bg-dark-border rounded w-5/6" />
+                <div className="h-4 bg-dark-border rounded w-2/3" />
+                <div className="h-4 bg-dark-border rounded w-full" />
+                <div className="h-4 bg-dark-border rounded w-4/5" />
               </div>
             ) : transcription ? (
               <p className="text-dark-text leading-relaxed whitespace-pre-wrap">
